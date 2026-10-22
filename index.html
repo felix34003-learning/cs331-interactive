@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CS331 · Binary search lab</title>
+<style>:root{color-scheme:dark;--bg:#0c111a;--panel:#131c29;--text:#e8edf5;--muted:#a8b6c9;--line:#29364b;--accent:#b5f0d4;font:16px/1.55 system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}main{max-width:1240px;margin:auto;padding:36px 32px}header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.eyebrow{font-size:12px;letter-spacing:.13em;color:var(--muted)}.badge{font-size:12px;color:var(--accent)}h1{font-size:clamp(30px,4vw,52px);font-weight:550;letter-spacing:-.04em;line-height:1.15;margin:30px 0 12px}.intro{color:var(--muted);margin-bottom:30px}.layout{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(260px,1fr);gap:28px}manimgx-player{border-radius:12px;overflow:hidden;min-height:210px}#status,.legend{font-size:12px;color:var(--muted)}.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,input,textarea{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:9px 12px}button{cursor:pointer}button:hover{border-color:var(--accent)}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}input{width:78px}textarea{width:100%;resize:vertical;display:block;margin:8px 0 12px}.primary{background:var(--accent);color:#101c18;border-color:transparent}h2{font-size:23px;line-height:1.25;font-weight:500}aside>p{color:var(--muted)}.invariant{border-left:2px solid var(--accent);padding:8px 16px;margin:24px 0}.invariant p{margin:5px 0;font-size:14px}aside button{margin:0 0 12px}details{font-size:14px;margin-top:20px}summary{cursor:pointer}details p{color:var(--muted)}.step-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}.step-buttons button{padding:5px 10px;font-size:13px}.step-buttons button[aria-current=true]{background:var(--text);color:var(--bg)}.question{margin-top:32px;padding-top:24px;border-top:1px solid var(--line);max-width:850px}.question>p{color:var(--muted)}#copied{font-size:13px;margin-left:12px}footer{margin-top:36px;font-size:12px;color:var(--muted)}a{color:var(--accent)}@media(max-width:800px){main{padding:24px 16px}.layout{grid-template-columns:1fr}h1{margin-top:24px}manimgx-player{min-height:160px}}
+</style>
+<main>
+  <header><span class="eyebrow">CS331 / INTERACTIVE LESSON 01</span><span class="badge">Powered by ManimGX</span></header>
+  <h1>Find it. Discard half. Repeat.</h1>
+  <p class="intro">Binary search keeps only the part of a sorted array that could still contain your target.</p>
+  <div class="layout">
+    <section aria-label="Animation">
+      <div id="player-mount"></div>
+      <p id="status" role="status">Loading the ManimGX player…</p>
+      <div class="controls">
+        <button id="back">← Previous</button><button id="play">Play / pause</button><button id="next">Next →</button>
+        <label>Find <input id="target" type="number" min="-999" max="999" value="19"></label><button id="restart">Try target</button>
+      </div>
+      <div id="steps" class="step-buttons" aria-label="Lesson steps"></div>
+      <p class="legend">Blue = candidate · Yellow = middle · Green = found · Gray = discarded</p>
+    </section>
+    <aside>
+      <span id="step-label" class="eyebrow"></span>
+      <h2 id="caption"></h2>
+      <p id="explanation"></p>
+      <div class="invariant"><strong>What stays true</strong><p>If the target is present, it is between low and high.</p></div>
+      <button id="why" class="primary">Show why we can discard half</button>
+      <button id="return" hidden>Return to my step</button>
+      <details><summary>Runtime and a Python detail</summary><p>Each comparison roughly halves the remaining interval: O(log n) comparisons and O(1) extra space for the iterative version. Use index bounds; copying slices adds work. A recursive version uses O(log n) stack space.</p></details>
+    </aside>
+  </div>
+  <section class="question">
+    <h2>Confused at this step?</h2>
+    <p>Pause here and copy a question into our Codex chat. It includes your target, bounds, middle index, and exact lesson step.</p>
+    <label for="question">Your question</label>
+    <textarea id="question" rows="2" placeholder="Why is it safe to throw these values away?"></textarea>
+    <button id="ask" class="primary">Copy question for Codex</button><span id="copied" role="status"></span>
+    <textarea id="context" rows="6" readonly hidden aria-label="Question with lesson context"></textarea>
+  </section>
+  <footer>Course sources: Runtime Complexity, pages 20–24 · Recursion, page 6 · 08-recursion.ipynb, cells 9–11.<br>Animation runs from editable Python scenes. No MP4 export. First use downloads and caches the browser runtime; internet and WebGPU are required.</footer>
+</main>
+<script type="module">import {settings} from 'data:text/javascript;base64,ZnVuY3Rpb24gZyhlKXtyZXR1cm4gU3RyaW5nKHR5cGVvZiBlPT09Im9iamVjdCImJmUhPT1udWxsJiYibWVzc2FnZSJpbiBlP2UubWVzc2FnZT8/ZTplKX12YXIgUD0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L3B5b2RpZGUvdjMxNC4wLjcvZnVsbC8iLEU9L01hY3xpUGhvbmV8aVBhZC8udGVzdChuYXZpZ2F0b3IucGxhdGZvcm0pLGQ9e3B5b2RpZGU6UCxtYW5pbWd4OiJtYW5pbWd4In0sdj17d29ya2VyOigpPT5uZXcgVVJMKCIuL2RpcmVjdG9yLmpzIixpbXBvcnQubWV0YS51cmwpfSx1O2Z1bmN0aW9uIGIoZSxpKXtlLnBvc3RNZXNzYWdlKGkpfWZ1bmN0aW9uIHkoKXtpZih1KXJldHVybiB1O2xldCBlPW5ldyBXb3JrZXIodi53b3JrZXIoKSx7dHlwZToibW9kdWxlIn0pLGk9bmV3IE1hcCxuPSgpPT57fSxhPXtkaXJlY3RvcjplLHBsYXllcnM6aSxlbmdpbmU6bmV3IFByb21pc2UoKHIpPT5uPXIpLHN0YXR1czoiTG9hZGluZyBQeXRob27igKYiLGZhaWx1cmU6bnVsbH07dT1hO2xldCBvPShyKT0+e2lmKGEuZmFpbHVyZSE9PW51bGwpcmV0dXJuO2EuZmFpbHVyZT1hLnN0YXR1cz1yLG4obnVsbCksZS50ZXJtaW5hdGUoKTtmb3IobGV0IGwgb2YgaS52YWx1ZXMoKSlsLmZhaWwocil9O3JldHVybiBlLm9uZXJyb3I9KHIpPT5vKGBNYW5pbUdYIGNvdWxkIG5vdCBzdGFydDogJHtyLm1lc3NhZ2V9YCksZS5vbm1lc3NhZ2VlcnJvcj0oKT0+bygiTWFuaW1HWCBjb3VsZCBub3QgcmVhZCBpdHMgd29ya2VyJ3MgcmVwbHkiKSxlLm9ubWVzc2FnZT1hc3luYyh7ZGF0YTpyfSk9PntpZihhLmZhaWx1cmUhPT1udWxsKXJldHVybjtpZigiZmFpbHVyZSJpbiByKXJldHVybiBvKHIuZmFpbHVyZSk7aWYoInN0YXR1cyJpbiByKXthLnN0YXR1cz1yLnN0YXR1cztmb3IobGV0IGwgb2YgaS52YWx1ZXMoKSlsLndhaXQoKX1pZigiZW5naW5lImluIHIpe2xldHtqczpsLHdhc206Yyxmb250czpofT1yLmVuZ2luZSx0PVVSTC5jcmVhdGVPYmplY3RVUkwobmV3IEJsb2IoW2xdLHt0eXBlOiJ0ZXh0L2phdmFzY3JpcHQifSkpO3RyeXtsZXQgcz1hd2FpdCBpbXBvcnQodCk7YXdhaXQgcy5kZWZhdWx0KHttb2R1bGVfb3JfcGF0aDpjfSksYXdhaXQgcy5pbml0KGgpLG4ocyl9Y2F0Y2gocyl7byhgTWFuaW1HWCBjYW4ndCBkcmF3IGhlcmU6ICR7ZyhzKX1gKX1maW5hbGx5e1VSTC5yZXZva2VPYmplY3RVUkwodCl9fWlmKCJmaWxtImluIHIpaS5nZXQoci5maWxtKT8uZmVlZChyLmZlZWQpfSxiKGUse2Jvb3Q6e3B5b2RpZGU6ZC5weW9kaWRlLG1hbmltZ3g6ZC5tYW5pbWd4fX0pLHV9dmFyIE09MDtjbGFzcyB3IGV4dGVuZHMgSFRNTEVsZW1lbnR7c3RhdGljIG9ic2VydmVkQXR0cmlidXRlcz1bInNjZW5lIl07I3I9MDsjYzsjbDsjaT1udWxsOyNkPVtdOyNuPXt0aW1lOjAscGxheWluZzpudWxsfTsjaD0hMTsjcz0hMTsjZT1udWxsOyNvOyNtOyNmPTA7I3U7Y29uc3RydWN0b3IoKXtzdXBlcigpO3RoaXMuI3U9dGhpcy5hdHRhY2hTaGFkb3coe21vZGU6Im9wZW4ifSksdGhpcy4jdS5pbm5lckhUTUw9YDxzdHlsZT4KICAgICAgOmhvc3QgeyBkaXNwbGF5OiBibG9jazsgcG9zaXRpb246IHJlbGF0aXZlOyBhc3BlY3QtcmF0aW86IHZhcigtLWZpbG0sIDE2IC8gOSk7IGJhY2tncm91bmQ6ICMwMDA7IG91dGxpbmU6IG5vbmU7IGNvbnRhaW46IGNvbnRlbnQ7IH0KICAgICAgY2FudmFzIHsgcG9zaXRpb246IGFic29sdXRlOyBpbnNldDogMDsgd2lkdGg6IDEwMCU7IGhlaWdodDogMTAwJTsgdG91Y2gtYWN0aW9uOiBwYW4teTsgfQogICAgICBwIHsgcG9zaXRpb246IGFic29sdXRlOyBpbnNldDogMDsgbWFyZ2luOiBhdXRvOyBoZWlnaHQ6IDEuNWVtOyB0ZXh0LWFsaWduOiBjZW50ZXI7IGNvbG9yOiAjZmZmYjsgZm9udDogMTVweCBzeXN0ZW0tdWksIHNhbnMtc2VyaWY7IH0KICAgIDwvc3R5bGU+PGNhbnZhcz48L2NhbnZhcz48cD48L3A+YDtsZXQgZT10aGlzLiN1LnF1ZXJ5U2VsZWN0b3IoImNhbnZhcyIpLGk9dGhpcy4jdS5xdWVyeVNlbGVjdG9yKCJwIik7aWYoIWV8fCFpKXRocm93IEVycm9yKCJUaGUgcGxheWVyJ3MgY2FudmFzIGFuZCBzdGF0dXMgYXJlIG1pc3NpbmciKTt0aGlzLiNjPWUsdGhpcy4jbD1pfWNvbm5lY3RlZENhbGxiYWNrKCl7aWYoIXRoaXMuaGFzQXR0cmlidXRlKCJ0YWJpbmRleCIpKXRoaXMudGFiSW5kZXg9MDtpZih0aGlzLiNvfHx0aGlzLiNzKXJldHVybjt0aGlzLiNyPSsrTTtsZXQgZT10aGlzLiNvPW5ldyBBYm9ydENvbnRyb2xsZXIsaT1zZXRUaW1lb3V0KCgpPT57aWYoIWUuc2lnbmFsLmFib3J0ZWQpdGhpcy4jYihlLnNpZ25hbCl9KTtlLnNpZ25hbC5hZGRFdmVudExpc3RlbmVyKCJhYm9ydCIsKCk9PntjbGVhclRpbWVvdXQoaSksY2xlYXJUaW1lb3V0KHRoaXMuI20pLGNhbmNlbEFuaW1hdGlvbkZyYW1lKHRoaXMuI2YpLHRoaXMuI2Y9MH0se29uY2U6ITB9KX1kaXNjb25uZWN0ZWRDYWxsYmFjaygpe2lmKHRoaXMuI28/LmFib3J0KCksdGhpcy4jbz12b2lkIDAsdT8ucGxheWVycy5kZWxldGUodGhpcy4jcikmJnUuZmFpbHVyZT09PW51bGwpYih1LmRpcmVjdG9yLHtmaWxtOnRoaXMuI3IsZHJvcDohMH0pO3RoaXMuI2Q9W107bGV0IGU9dGhpcy4jZTtpZihlKXRoaXMuI249e3RpbWU6ZS50aW1lLHBsYXlpbmc6ITF9LGUucGF1c2UoKSx0aGlzLiNlPW51bGwsZS5mcmVlKCl9YXR0cmlidXRlQ2hhbmdlZENhbGxiYWNrKCl7aWYodGhpcy4jaCYmdGhpcy4jaSE9PW51bGwpdGhpcy4jcCgpfWdldCBzb3VyY2UoKXtyZXR1cm4gdGhpcy4jaX1zZXQgc291cmNlKGUpe2lmKHRoaXMuI2k9ZT09bnVsbD9udWxsOlN0cmluZyhlKSx0aGlzLiNoJiZ0aGlzLiNpIT09bnVsbCl0aGlzLiNwKCl9Z2V0IHNjZW5lKCl7cmV0dXJuIHRoaXMuI2U/LnNjZW5lPz90aGlzLmdldEF0dHJpYnV0ZSgic2NlbmUiKX1zZXQgc2NlbmUoZSl7aWYodGhpcy5jdXJyZW50VGltZT0wLGU9PW51bGwpdGhpcy5yZW1vdmVBdHRyaWJ1dGUoInNjZW5lIik7ZWxzZSB0aGlzLnNldEF0dHJpYnV0ZSgic2NlbmUiLGUpfWdldCBjdXJyZW50VGltZSgpe3JldHVybiB0aGlzLiNlPy50aW1lPz90aGlzLiNuLnRpbWV9c2V0IGN1cnJlbnRUaW1lKGUpe2lmKCFOdW1iZXIuaXNGaW5pdGUoTnVtYmVyKGUpKSlyZXR1cm47aWYodGhpcy4jZSl0aGlzLiNlLnRpbWU9TnVtYmVyKGUpO2Vsc2UgdGhpcy4jbi50aW1lPU51bWJlcihlKTt0aGlzLiN0KCl9Z2V0IGR1cmF0aW9uKCl7cmV0dXJuIHRoaXMuI2U/LmZpbG0/dGhpcy4jZS5kdXJhdGlvbjpOYU59Z2V0IHBhdXNlZCgpe3JldHVybiB0aGlzLiNlPyF0aGlzLiNlLnBsYXlpbmc6ISh0aGlzLiNuLnBsYXlpbmc/P3RoaXMuaGFzQXR0cmlidXRlKCJhdXRvcGxheSIpKX1wbGF5KCl7aWYodGhpcy4jZSl0aGlzLiNlLnBsYXkoKTtlbHNlIHRoaXMuI24ucGxheWluZz0hMDt0aGlzLiN0KCl9cGF1c2UoKXtpZih0aGlzLiNlKXRoaXMuI2UucGF1c2UoKTtlbHNlIHRoaXMuI24ucGxheWluZz0hMTt0aGlzLiN0KCl9YXN5bmMjYihlKXtpZih0aGlzLiNzKXJldHVybjtpZighdGhpcy4jaCl7dGhpcy4jaD0hMDtsZXQgdD10aGlzLnF1ZXJ5U2VsZWN0b3IoJ3NjcmlwdFt0eXBlPSJ0ZXh0L3B5dGhvbiJdJyk7aWYodCYmdGhpcy4jaT09PW51bGwpdGhpcy4jaT1rKHQudGV4dENvbnRlbnQpfWxldHtwbGF5ZXJzOmksZW5naW5lOm4sZmFpbHVyZTphfT15KCk7aWYoYSE9PW51bGwpcmV0dXJuIHRoaXMuI2EoYSk7aWYoaS5zZXQodGhpcy4jcix7d2FpdDooKT0+dGhpcy4jZygpLGZlZWQ6KHQpPT50aGlzLiN5KHQpLGZhaWw6KHQpPT50aGlzLiNhKHQpfSksdGhpcy4jZygpLHRoaXMuI2khPT1udWxsKXRoaXMuI3AoKTtsZXQgbz10aGlzLiNjLHI9by5nZXRCb3VuZGluZ0NsaWVudFJlY3QoKSxsPU1hdGgubWF4KDEsTWF0aC5yb3VuZChyLndpZHRoKmRldmljZVBpeGVsUmF0aW8pKSxjPU1hdGgubWF4KDEsTWF0aC5yb3VuZChyLmhlaWdodCpkZXZpY2VQaXhlbFJhdGlvKSk7aWYoby53aWR0aCE9PWwpby53aWR0aD1sO2lmKG8uaGVpZ2h0IT09YylvLmhlaWdodD1jO2xldCBoPWF3YWl0IFByb21pc2UucmFjZShbbixuZXcgUHJvbWlzZSgodCk9PmUuYWRkRXZlbnRMaXN0ZW5lcigiYWJvcnQiLCgpPT50KHZvaWQgMCkse29uY2U6ITB9KSldKTtpZighaHx8ZS5hYm9ydGVkfHx0aGlzLiNzKXJldHVybjt0cnl7bGV0e3RpbWU6dCxwbGF5aW5nOnN9PXRoaXMuI247dGhpcy4jZT1uZXcgaC5QbGF5ZXIobyx0LHM/P3RoaXMuaGFzQXR0cmlidXRlKCJhdXRvcGxheSIpLEUpLHRoaXMuI2UucmVzaXplKG8ud2lkdGgsby5oZWlnaHQsZGV2aWNlUGl4ZWxSYXRpbyl9Y2F0Y2godCl7cmV0dXJuIHRoaXMuI2EodCl9dGhpcy4jbC5yZW1vdmUoKSx0aGlzLiN2KGUpO2ZvcihsZXQgdCBvZiB0aGlzLiNkLnNwbGljZSgwKSl0aGlzLiN5KHQpO3RoaXMuI3QoKX0jZygpe2lmKCF0aGlzLiNlJiYhdGhpcy4jcyl0aGlzLiNsLnRleHRDb250ZW50PXkoKS5zdGF0dXN9I2EoZSl7dGhpcy4jcz0hMCx0aGlzLmRpc2Nvbm5lY3RlZENhbGxiYWNrKCksdGhpcy4jbC50ZXh0Q29udGVudD1nKGUpLHRoaXMuI3UuYXBwZW5kKHRoaXMuI2wpfSNwKCl7aWYodGhpcy4jaT09PW51bGx8fCF1Py5wbGF5ZXJzLmhhcyh0aGlzLiNyKSlyZXR1cm47Yih5KCkuZGlyZWN0b3Ise2ZpbG06dGhpcy4jcixydW46e3NvdXJjZTp0aGlzLiNpLHNjZW5lOnRoaXMuZ2V0QXR0cmlidXRlKCJzY2VuZSIpfX0pfSN5KGUpe2lmKHRoaXMuI3MpcmV0dXJuO2lmKCF0aGlzLiNlKXt0aGlzLiNkLnB1c2goZSk7cmV0dXJufXRyeXt0aGlzLiNlLmZlZWQobmV3IFVpbnQ4QXJyYXkoZSkpfWNhdGNoKG4pe3JldHVybiB0aGlzLiNhKG4pfWxldCBpPXRoaXMuI2UuZmlsbTtpZihpKXRoaXMuc3R5bGUuc2V0UHJvcGVydHkoIi0tZmlsbSIsYCR7aVswXX0gLyAke2lbMV19YCk7dGhpcy4jdCgpfSN2KGUpe2xldCBpPXRoaXMuI2Usbj10aGlzLiNjO2lmKCFpKXJldHVybjtsZXQgYT0odCk9PntsZXQgcz1uLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpO3JldHVyblsodC5jbGllbnRYLXMubGVmdCkqKG4ud2lkdGgvcy53aWR0aCksKHQuY2xpZW50WS1zLnRvcCkqKG4uaGVpZ2h0L3MuaGVpZ2h0KV19LG89KHQscyxmLG0pPT50LmFkZEV2ZW50TGlzdGVuZXIocywocCk9PntpZih0aGlzLiNlIT09aSlyZXR1cm47aWYoZihwKSlwLnByZXZlbnREZWZhdWx0KCk7dGhpcy4jdCgpfSx7Li4ubSxzaWduYWw6ZX0pLHI9bnVsbDtvKHRoaXMsImtleWRvd24iLCh0KT0+aS5rZXkodC5rZXksdC5jdHJsS2V5LHQuYWx0S2V5LHQubWV0YUtleSkpLG8obiwicG9pbnRlcm1vdmUiLCh0KT0+aS5wb2ludGVyKC4uLmEodCkpKSxvKG4sInBvaW50ZXJkb3duIiwodCk9PntpZihyIT09bnVsbHx8dC5idXR0b24hPT0wfHwhdC5pc1ByaW1hcnkpcmV0dXJuITE7cmV0dXJuIHI9dC5wb2ludGVySWQsdGhpcy5mb2N1cyh7cHJldmVudFNjcm9sbDohMH0pLG4uc2V0UG9pbnRlckNhcHR1cmUodC5wb2ludGVySWQpLGkucHJlc3MoLi4uYSh0KSx0LnBvaW50ZXJUeXBlPT09InRvdWNoIil9KTtsZXQgbD0odCxzKT0+e2lmKHQucG9pbnRlcklkIT09cilyZXR1cm4hMTtyZXR1cm4gcj1udWxsLHMoKX07byhuLCJwb2ludGVydXAiLCh0KT0+bCh0LCgpPT5pLnJlbGVhc2UoKSkpLG8obiwicG9pbnRlcmNhbmNlbCIsKHQpPT5sKHQsKCk9PmkuY2FuY2VsKCkpKSxvKG4sInBvaW50ZXJsZWF2ZSIsKCk9PmkubGVhdmUoKSksbyhuLCJ3aGVlbCIsKHQpPT57bGV0IHM9WzEsMjAsbi5jbGllbnRIZWlnaHRdW3QuZGVsdGFNb2RlXT8/MTtyZXR1cm4gaS53aGVlbCh0LmRlbHRhWCpzLHQuZGVsdGFZKnMpfSx7cGFzc2l2ZTohMX0pLG8oZG9jdW1lbnQsImZ1bGxzY3JlZW5jaGFuZ2UiLCgpPT5pLmZ1bGxzY3JlZW4oZG9jdW1lbnQuZnVsbHNjcmVlbkVsZW1lbnQ9PT10aGlzKSk7bGV0IGM9bmV3IFJlc2l6ZU9ic2VydmVyKChbdF0pPT57aWYoIXQpcmV0dXJuO2xldCBzPXQuZGV2aWNlUGl4ZWxDb250ZW50Qm94U2l6ZT8uWzBdLGY9dC5jb250ZW50Qm94U2l6ZVswXTtpZighZilyZXR1cm47bGV0IG09cz9zLmlubGluZVNpemU6TWF0aC5yb3VuZChmLmlubGluZVNpemUqZGV2aWNlUGl4ZWxSYXRpbykscD1zP3MuYmxvY2tTaXplOk1hdGgucm91bmQoZi5ibG9ja1NpemUqZGV2aWNlUGl4ZWxSYXRpbyk7aWYodGhpcy4jZSE9PWkpcmV0dXJuO2kucmVzaXplKG0scCxtL2YuaW5saW5lU2l6ZSksdGhpcy4jdCgpfSk7Yy5vYnNlcnZlKG4pO2xldCBoPW5ldyBJbnRlcnNlY3Rpb25PYnNlcnZlcigoW3RdKT0+e2lmKCF0KXJldHVybjtpZih0aGlzLiNlIT09aSlyZXR1cm47aS5oaWRlKCF0LmlzSW50ZXJzZWN0aW5nKSx0aGlzLiN0KCl9KTtoLm9ic2VydmUodGhpcyksZS5hZGRFdmVudExpc3RlbmVyKCJhYm9ydCIsKCk9PntjLmRpc2Nvbm5lY3QoKSxoLmRpc2Nvbm5lY3QoKX0se29uY2U6ITB9KX0jdCgpe2xldCBlPXRoaXMuI2U7aWYoIWV8fCF0aGlzLiNvfHx0aGlzLiNvLnNpZ25hbC5hYm9ydGVkKXJldHVybjtmb3IobGV0W24sYV1vZiBlLmFza3MoKSlpZihuPT09InNjZW5lIil0aGlzLnNldEF0dHJpYnV0ZSgic2NlbmUiLGEpO2Vsc2UgaWYobj09PSJmdWxsc2NyZWVuIil7aWYoYSl0aGlzLnJlcXVlc3RGdWxsc2NyZWVuPy4oKS5jYXRjaCgoKT0+e30pO2Vsc2UgaWYoZG9jdW1lbnQuZnVsbHNjcmVlbkVsZW1lbnQ9PT10aGlzKWRvY3VtZW50LmV4aXRGdWxsc2NyZWVuKCl9dGhpcy4jYy5zdHlsZS5jdXJzb3I9ZS5jdXJzb3IsY2xlYXJUaW1lb3V0KHRoaXMuI20pO2xldCBpO3RyeXtpPWUud2FrZSgpfWNhdGNoKG4pe3JldHVybiB0aGlzLiNhKG4pfWlmKGk9PT0wKXRoaXMuI2Z8fD1yZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCk9PnRoaXMuI3coKSk7ZWxzZSBpZihpPjApdGhpcy4jbT1zZXRUaW1lb3V0KCgpPT50aGlzLiN0KCksaSl9I3coKXt0aGlzLiNmPTA7dHJ5e3RoaXMuI2U/LmRyYXcoKX1jYXRjaChlKXtyZXR1cm4gdGhpcy4jYShlKX10aGlzLiN0KCl9fWZ1bmN0aW9uIGsoZSl7bGV0IGk9ZS5yZXBsYWNlKC9eXG4rfFxzKyQvZywiIikuc3BsaXQoYApgKSxuPU1hdGgubWluKC4uLmkuZmlsdGVyKChhKT0+YS50cmltKCkpLm1hcCgoYSk9PmEuc2VhcmNoKC9cUy8pKSk7cmV0dXJuIGkubWFwKChhKT0+YS5zbGljZShuKSkuam9pbihgCmApK2AKYH1mdW5jdGlvbiB4KCl7Y3VzdG9tRWxlbWVudHMuZ2V0KCJtYW5pbWd4LXBsYXllciIpPz9jdXN0b21FbGVtZW50cy5kZWZpbmUoIm1hbmltZ3gtcGxheWVyIix3KX12Lndvcmtlcj0oKT0+VVJMLmNyZWF0ZU9iamVjdFVSTChuZXcgQmxvYihbJ2Z1bmN0aW9uIGcoZSl7cmV0dXJuIFN0cmluZyh0eXBlb2YgZT09PSJvYmplY3QiJiZlIT09bnVsbCYmIm1lc3NhZ2UiaW4gZT9lLm1lc3NhZ2U/P2U6ZSl9dmFyIG09bmV3IE1hcCxoLHk9ITEsXz0hMTtmdW5jdGlvbiBjKGUsdD1bXSl7cG9zdE1lc3NhZ2UoZSx0KX1vbm1lc3NhZ2U9KHtkYXRhOmV9KT0+e2lmKCJib290ImluIGUpe2g9YihlLmJvb3QpLmNhdGNoKCh0KT0+KF89ITAsbS5jbGVhcigpLGMoe2ZhaWx1cmU6YE1hbmltR1ggY291bGQgbm90IHN0YXJ0OiAke2codCl9YH0pLG51bGwpKTtyZXR1cm59aWYoIV8pbS5zZXQoZS5maWxtLCJydW4iaW4gZT9lLnJ1bjpudWxsKSxQKCl9O2FzeW5jIGZ1bmN0aW9uIGIoe3B5b2RpZGU6ZSxtYW5pbWd4OnR9KXtjKHtzdGF0dXM6IkxvYWRpbmcgUHl0aG9u4oCmIn0pO2xldHtsb2FkUHlvZGlkZTpkfT1hd2FpdCBpbXBvcnQoYCR7ZX1weW9kaWRlLm1qc2ApLHI9YXdhaXQgZCh7aW5kZXhVUkw6ZX0pO2Moe3N0YXR1czoiSW5zdGFsbGluZyBNYW5pbUdY4oCmIn0pLGF3YWl0IHIubG9hZFBhY2thZ2UoIm1pY3JvcGlwIik7bGV0IGY9ci5weWltcG9ydCgibWljcm9waXAiKTthd2FpdCBmLmluc3RhbGwodCk7bGV0IGw9ci5ydW5QeXRob24oYFxuZnJvbSBtYW5pbWd4IGltcG9ydCBfZW5naW5lXG5mcm9tIG1hbmltZ3guZHJhd2luZy50eXBlc2V0dGluZyBpbXBvcnQgRk9OVFNcbigqX2VuZ2luZS53ZWIoKSwgX2VuZ2luZS5mYWNlX2ZvbnRzKGxpc3QoRk9OVFMpKSlgKSxbbyxpLHNdPWwudG9KcygpO2wuZGVzdHJveSgpLGMoe2VuZ2luZTp7anM6byx3YXNtOmksZm9udHM6c319LFtpLmJ1ZmZlciwuLi5zLm1hcCgoYSk9PmEuYnVmZmVyKV0pO2xldCBuPXIucnVuUHl0aG9uKHgpLHA9ci5ydW5QeXRob24oImxhbWJkYSB0ZXh0OiB0b19qcyhfZW5naW5lLm5vdGUodGV4dCkpIiksdT1yLnJ1blB5dGhvbigiZHJvcCIpO3JldHVybntweTpyLG1pY3JvcGlwOmYscnVubmVyOm4sbm90ZTpwLGRyb3A6dX19YXN5bmMgZnVuY3Rpb24gUCgpe2xldCBlPWF3YWl0IGg7aWYoIWV8fHkpcmV0dXJuO2xldHtweTp0LG1pY3JvcGlwOmQscnVubmVyOnIsbm90ZTpmLGRyb3A6bH09ZTt5PSEwO3RyeXtmb3IobGV0W28saV1vZiBtKXttLmRlbGV0ZShvKTtsZXQgcz0obik9PmMoe2ZpbG06byxmZWVkOm4uYnVmZmVyfSxbbi5idWZmZXJdKTt0cnl7aWYoaT09PW51bGwpe2wobyk7Y29udGludWV9bGV0e3NvdXJjZTpuLHNjZW5lOnB9PWk7YXdhaXQgdC5sb2FkUGFja2FnZXNGcm9tSW1wb3J0cyhuKTtsZXQgdT1bXTtmb3IobGV0IGE7YT1yKG8sbixwPz9udWxsLHMsdSk7KXUucHVzaChhKSxhd2FpdCBkLmluc3RhbGwoYSkuY2F0Y2goKCk9Pnt9KX1jYXRjaChuKXtzKGYoSlNPTi5zdHJpbmdpZnkoe2Vycm9yOnttZXNzYWdlOmcobiksdHlwZToiRXJyb3IifX0pKSl9YXdhaXQgbmV3IFByb21pc2UoKG4pPT5zZXRUaW1lb3V0KG4pKX19ZmluYWxseXtpZih5PSExLG0uc2l6ZSlQKCl9fXZhciB4PWBcbmltcG9ydCBkYXRhY2xhc3NlcywgaW1wb3J0bGliLnV0aWwsIGpzb24sIGxpbmVjYWNoZSwgc2h1dGlsLCBzeXMsIHRyYWNlYmFja1xuZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG5mcm9tIHB5b2RpZGUuZmZpIGltcG9ydCB0b19qc1xuZnJvbSBtYW5pbWd4IGltcG9ydCBfZW5naW5lXG5mcm9tIG1hbmltZ3guY29uZmlnIGltcG9ydCBDb25maWcsIGNvbmZpZ1xuZnJvbSBtYW5pbWd4LnNjZW5lIGltcG9ydCBTY2VuZVxuXG5GSUxNUyA9IFBhdGgoIi9ob21lL3B5b2RpZGUvZmlsbXMiKVxuXG5kZWYgcnVuKGZpbG0sIHNvdXJjZSwgbmFtZSwgc2VuZCwgdHJpZWQpOlxuICAgIG91dCA9IGxhbWJkYSBkYXRhOiBzZW5kKHRvX2pzKGRhdGEpKVxuICAgIHBhdGggPSBGSUxNUyAvIHN0cihmaWxtKSAvICJzY2VuZS5weSJcbiAgICB0cnk6XG4gICAgICAgIHBhdGgucGFyZW50Lm1rZGlyKHBhcmVudHM9VHJ1ZSwgZXhpc3Rfb2s9VHJ1ZSlcbiAgICAgICAgcGF0aC53cml0ZV90ZXh0KHNvdXJjZSwgZW5jb2Rpbmc9InV0Zi04IilcbiAgICAgICAgbGluZWNhY2hlLmNhY2hlLnBvcChzdHIocGF0aCksIE5vbmUpXG4gICAgICAgIGRlZmF1bHRzID0gQ29uZmlnKClcbiAgICAgICAgZm9yIGZpZWxkIGluIGRhdGFjbGFzc2VzLmZpZWxkcyhDb25maWcpOlxuICAgICAgICAgICAgc2V0YXR0cihjb25maWcsIGZpZWxkLm5hbWUsIGdldGF0dHIoZGVmYXVsdHMsIGZpZWxkLm5hbWUpKVxuICAgICAgICBzcGVjID0gaW1wb3J0bGliLnV0aWwuc3BlY19mcm9tX2ZpbGVfbG9jYXRpb24oInNjZW5lIiwgcGF0aClcbiAgICAgICAgbW9kdWxlID0gaW1wb3J0bGliLnV0aWwubW9kdWxlX2Zyb21fc3BlYyhzcGVjKVxuICAgICAgICBzeXMubW9kdWxlc1sic2NlbmUiXSA9IG1vZHVsZVxuICAgICAgICBleGVjKGNvbXBpbGUoc291cmNlLCBzdHIocGF0aCksICJleGVjIiksIG1vZHVsZS5fX2RpY3RfXylcbiAgICAgICAgc2NlbmVzID0gW3YgZm9yIHYgaW4gdmFycyhtb2R1bGUpLnZhbHVlcygpIGlmIGlzaW5zdGFuY2UodiwgdHlwZSkgYW5kIGlzc3ViY2xhc3ModiwgU2NlbmUpIGFuZCB2Ll9fbW9kdWxlX18gPT0gInNjZW5lIl1cbiAgICAgICAgbmFtZXMgPSBbcy5fX25hbWVfXyBmb3IgcyBpbiBzY2VuZXNdXG4gICAgICAgIGlmIG5vdCBzY2VuZXM6XG4gICAgICAgICAgICByYWlzZSBWYWx1ZUVycm9yKCJ0aGUgc291cmNlIGRlZmluZXMgbm8gc2NlbmUgKGEgc3ViY2xhc3Mgb2YgbWFuaW1neC5TY2VuZSkiKVxuICAgICAgICBraW5kID0gc2NlbmVzW25hbWVzLmluZGV4KG5hbWUpXSBpZiBuYW1lIGluIG5hbWVzIGVsc2Ugc2NlbmVzWzBdXG4gICAgICAgIG91dChfZW5naW5lLm5vdGUoanNvbi5kdW1wcyh7InNjZW5lcyI6IG5hbWVzLCAic2NlbmUiOiBraW5kLl9fbmFtZV9ffSkpKVxuICAgICAgICBraW5kKCkucmVuZGVyKHRha2U9b3V0KVxuICAgIGV4Y2VwdCBNb2R1bGVOb3RGb3VuZEVycm9yIGFzIGVycm9yOlxuICAgICAgICBpZiBlcnJvci5uYW1lIGFuZCBlcnJvci5uYW1lIG5vdCBpbiBsaXN0KHRyaWVkKTpcbiAgICAgICAgICAgIHJldHVybiBlcnJvci5uYW1lICAjIGluc3RhbGxlZCwgdGhlbiBydW4gYWdhaW5cbiAgICAgICAgcmVwb3J0KG91dCwgcGF0aCwgZXJyb3IpXG4gICAgZXhjZXB0IEV4Y2VwdGlvbiBhcyBlcnJvcjpcbiAgICAgICAgcmVwb3J0KG91dCwgcGF0aCwgZXJyb3IpXG5cbmRlZiBkcm9wKGZpbG0pOlxuICAgIHBhdGggPSBGSUxNUyAvIHN0cihmaWxtKSAvICJzY2VuZS5weSJcbiAgICBtb2R1bGUgPSBzeXMubW9kdWxlcy5nZXQoInNjZW5lIilcbiAgICBpZiBnZXRhdHRyKG1vZHVsZSwgIl9fZmlsZV9fIiwgTm9uZSkgPT0gc3RyKHBhdGgpOlxuICAgICAgICBkZWwgc3lzLm1vZHVsZXNbInNjZW5lIl1cbiAgICBmb3IgZmlsZW5hbWUgaW4gbGlzdChsaW5lY2FjaGUuY2FjaGUpOlxuICAgICAgICBpZiBQYXRoKGZpbGVuYW1lKS5pc19yZWxhdGl2ZV90byhwYXRoLnBhcmVudCk6XG4gICAgICAgICAgICBkZWwgbGluZWNhY2hlLmNhY2hlW2ZpbGVuYW1lXVxuICAgIGlmIHBhdGgucGFyZW50LmV4aXN0cygpOlxuICAgICAgICBzaHV0aWwucm10cmVlKHBhdGgucGFyZW50KVxuXG5kZWYgcmVwb3J0KG91dCwgcGF0aCwgZXJyb3IpOlxuICAgICMgdGhlIHNjZW5lXCdzIG93biBmcmFtZXMsIG5vdCBtYW5pbWd4XCdzIG9yIFB5b2RpZGVcJ3NcbiAgICBmcmFtZXMgPSBbZiBmb3IgZiBpbiB0cmFjZWJhY2suZXh0cmFjdF90YihlcnJvci5fX3RyYWNlYmFja19fKSBpZiBmLmZpbGVuYW1lID09IHN0cihwYXRoKV1cbiAgICB0cmFjZSA9ICIiLmpvaW4odHJhY2ViYWNrLmZvcm1hdF9saXN0KGZyYW1lcykgKyB0cmFjZWJhY2suZm9ybWF0X2V4Y2VwdGlvbl9vbmx5KGVycm9yKSlcbiAgICBsaW5lID0gZnJhbWVzWy0xXS5saW5lbm8gaWYgZnJhbWVzIGVsc2UgZ2V0YXR0cihlcnJvciwgImxpbmVubyIsIE5vbmUpXG4gICAgb3V0KF9lbmdpbmUubm90ZShqc29uLmR1bXBzKHsiZXJyb3IiOiB7Im1lc3NhZ2UiOiBzdHIoZXJyb3IpLCAidHlwZSI6IHR5cGUoZXJyb3IpLl9fbmFtZV9fLCAidHJhY2UiOiB0cmFjZSwgImxpbmUiOiBsaW5lfX0pKSlcblxucnVuXG5gO1xuJ10se3R5cGU6InRleHQvamF2YXNjcmlwdCJ9KSk7ZC5tYW5pbWd4PSJtYW5pbWd4PT0wLjEuMSI7eCgpO2V4cG9ydHt3IGFzIE1hbmltZ3hQbGF5ZXIsZCBhcyBzZXR0aW5nc307Cg==';
+settings.manimgx = 'manimgx==0.1.1';
+const $ = id => document.getElementById(id);
+const values = [2,5,8,12,16,19,23,27,31];
+let target = 19, trace = [], current = 0, detour = false, savedTime = 0, source = '';
+let player = document.createElement('manimgx-player');
+player.setAttribute('aria-label','Binary search animation with native playback controls');
+$('player-mount').append(player);
+
+function buildTrace(t){
+  const steps=[]; let low=0,high=values.length-1;
+  while(low<=high){
+    const mid=Math.floor((low+high)/2), value=values[mid];
+    let caption,why;
+    if(value===t){caption=`Found ${t} at index ${mid}.`;why='The middle value equals the target, so we can stop. The array indices start at zero.';}
+    else if(value<t){caption=`${value} is too small. Keep the right half.`;why=`Every value at or left of index ${mid} is at most ${value}. Since ${t} is larger, none can match. Set low = mid + 1.`;}
+    else{caption=`${value} is too large. Keep the left half.`;why=`Every value at or right of index ${mid} is at least ${value}. Since ${t} is smaller, none can match. Set high = mid - 1.`;}
+    steps.push({low,high,mid,value,caption,why,found:value===t});
+    if(value===t)break;
+    if(value<t)low=mid+1;else high=mid-1;
+  }
+  if(!steps.at(-1).found)steps.push({low,high,mid:null,value:null,caption:`${t} is not in this array.`,why:'low is now greater than high. The candidate interval is empty, and every discarded value was ruled out by sorted order.',found:false});
+  return steps;
+}
+
+function sceneCode(steps,t){
+  return `import manimgx as m
+m.config.background_color = '#0c111a'
+class BinarySearch(m.Scene):
+    def construct(self):
+        values = ${JSON.stringify(values)}
+        steps = ${JSON.stringify(steps.map(s=>[s.low,s.high,s.mid??-1,s.found?1:0]))}
+        title = m.Text('BINARY SEARCH   |   target = ${t}', font_size=30).move_to([0,2.8,0])
+        self.add(title)
+        previous = None
+        for k, (lo, hi, mid, found) in enumerate(steps):
+            self.next_section('Step ' + str(k+1))
+            group = m.VGroup()
+            for i, value in enumerate(values):
+                color = '#64748b' if i < lo or i > hi else '#69a9ef'
+                if i == mid: color = '#b5f0d4' if found else '#f2ce73'
+                box = m.Square(side_length=1.08, color=color, fill_opacity=0.18, stroke_width=3).move_to([(i-4)*1.32,0.55,0])
+                number = m.Text(str(value),font_size=34,color=color).move_to(box.get_center())
+                index = m.Text(str(i),font_size=22,color='#94a3b8').move_to([(i-4)*1.32,-0.5,0])
+                group.add(box,number,index)
+            bounds = m.Text('low = ' + str(lo) + '     mid = ' + ('none' if mid < 0 else str(mid)) + '     high = ' + str(hi),font_size=29).move_to([0,-1.65,0])
+            group.add(bounds)
+            if previous is None: self.play(m.FadeIn(group),run_time=0.6)
+            else: self.play(m.ReplacementTransform(previous,group),run_time=0.6)
+            self.wait(4.4)
+            previous = group
+`;
+}
+
+function update(){
+  if(!trace.length)return;
+  const s=trace[current];
+  $('step-label').textContent=detour?'CONCEPT DETOUR':`STEP ${current+1} OF ${trace.length}`;
+  $('caption').textContent=detour?'Sorted order is the reason.':s.caption;
+  $('explanation').textContent=detour?'Compare the target to the middle value. Sorted order rules out an entire region at once. The animation highlights that region; you can return to exactly where you paused.':s.why;
+  $('back').disabled=detour||current===0;
+  $('next').disabled=detour||current===trace.length-1;
+  $('why').hidden=detour; $('return').hidden=!detour;
+  document.querySelectorAll('#steps button').forEach((b,i)=>b.setAttribute('aria-current',String(i===current)));
+}
+function go(i){
+  if(detour)return;
+  current=Math.max(0,Math.min(trace.length-1,i));
+  player.pause();player.currentTime=current*5+0.8;
+  update();
+}
+function restart(){
+  const n=Number($('target').value);
+  if(!Number.isSafeInteger(n)||n < -999||n>999){$('status').textContent='Choose an integer between -999 and 999.';return;}
+  target=n; trace=buildTrace(n);current=0;detour=false;
+  source=sceneCode(trace,target);player.pause();player.currentTime=0.8;player.source=source;
+  $('steps').replaceChildren(...trace.map((s,i)=>{const b=document.createElement('button');b.textContent=String(i+1);b.setAttribute('aria-label',`Go to step ${i+1}`);b.onclick=()=>go(i);return b;}));
+  update();
+}
+$('restart').onclick=restart;
+$('back').onclick=()=>go(current-1);
+$('next').onclick=()=>go(current+1);
+$('play').onclick=()=>player.paused?player.play():player.pause();
+$('why').onclick=()=>{
+  player.pause();savedTime=player.currentTime;detour=true;
+  const s=trace[current].mid!==null && !trace[current].found ? trace[current] : trace.find(s=>s.mid!==null&&!s.found) || buildTrace(19)[0];
+  const detourTarget=trace.includes(s)?target:19;
+  const middle=s.mid;
+  const direction=s.value<detourTarget?'left':'right';
+  player.currentTime=0;
+  player.source=`import manimgx as m
+m.config.background_color='#0c111a'
+class WhySortedOrder(m.Scene):
+    def construct(self):
+        title=m.Text('WHY DISCARD HALF?   target = ${detourTarget}',font_size=32).move_to([0,2.8,0])
+        self.add(title)
+        values=${JSON.stringify(values)}
+        for i,v in enumerate(values):
+            ruled = i <= ${middle} if '${direction}' == 'left' else i >= ${middle}
+            c='#f2ce73' if ruled else '#69a9ef'
+            box=m.Square(side_length=1.08,color=c,fill_opacity=0.2).move_to([(i-4)*1.32,0.65,0])
+            self.add(box,m.Text(str(v),font_size=34,color=c).move_to(box.get_center()))
+        caption=m.Text('${s.value} ${direction==='left'?'<':'>'} ${detourTarget}: the yellow region cannot contain the target.',font_size=27).move_to([0,-1.2,0])
+        self.play(m.Write(caption),run_time=1)
+        self.wait(3)
+`;
+  player.play();update();
+};
+$('return').onclick=()=>{player.pause();player.source=source;player.currentTime=savedTime;detour=false;update();};
+$('ask').onclick=async()=>{
+  player.pause();
+  const s=trace[current];
+  const text=`CS331 binary search lesson, step ${current+1}/${trace.length}${detour?' (concept detour)':''}.\nArray: [${values.join(', ')}]. Target: ${target}. low=${s.low}, high=${s.high}, mid=${s.mid}.\nCurrent explanation: ${s.caption} ${s.why}\nMy question: ${$('question').value.trim()||'Please explain this step with an additional conceptual example.'}\nPlease explain here and, if helpful, update the editable ManimGX lesson in CS_331/Algorithm_Videos/interactive. Course references: Runtime Complexity PDF pages 20-24; 08-recursion notebook cells 9-11.`;
+  $('context').value=text;$('context').hidden=false;
+  try{await navigator.clipboard.writeText(text);$('copied').textContent='Copied—paste into our chat.';}catch{$('context').select();$('copied').textContent='Select and copy the question below.';}
+};
+setInterval(()=>{
+  const error=player.shadowRoot?.querySelector('p')?.textContent;
+  if(error){$('status').textContent=error;return;}
+  if(Number.isFinite(player.duration)){
+    $('status').textContent=detour?'Concept detour · return whenever you are ready.':'Ready · Space pauses; arrow keys seek inside the player.';
+    if(!detour){const next=Math.max(0,Math.min(trace.length-1,Math.floor(player.currentTime/5)));if(current!==next){current=next;update();}}
+  }
+},200);
+restart();
+window.lessonQA={buildTrace,values,get player(){return player;},get trace(){return trace;},get current(){return current;}};
+</script>
+</html>
