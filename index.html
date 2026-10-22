@@ -46,8 +46,16 @@ const $ = id => document.getElementById(id);
 const values = [2,5,8,12,16,19,23,27,31];
 let target = 19, trace = [], current = 0, detour = false, savedTime = 0, source = '';
 let player = document.createElement('manimgx-player');
-player.setAttribute('aria-label','Binary search animation with native playback controls');
-$('player-mount').append(player);
+function loadScene(code,time=0.8,playing=false){
+  player.pause();
+  const next=document.createElement('manimgx-player');
+  next.setAttribute('aria-label','Binary search animation with native playback controls');
+  next.source=code;
+  next.currentTime=time;
+  if(playing)next.play();else next.pause();
+  player=next;
+  $('player-mount').replaceChildren(player);
+}
 
 function buildTrace(t){
   const steps=[]; let low=0,high=values.length-1;
@@ -115,7 +123,7 @@ function restart(){
   const n=Number($('target').value);
   if(!Number.isSafeInteger(n)||n < -999||n>999){$('status').textContent='Choose an integer between -999 and 999.';return;}
   target=n; trace=buildTrace(n);current=0;detour=false;
-  source=sceneCode(trace,target);player.pause();player.currentTime=0.8;player.source=source;
+  source=sceneCode(trace,target);loadScene(source);
   $('steps').replaceChildren(...trace.map((s,i)=>{const b=document.createElement('button');b.textContent=String(i+1);b.setAttribute('aria-label',`Go to step ${i+1}`);b.onclick=()=>go(i);return b;}));
   update();
 }
@@ -129,8 +137,7 @@ $('why').onclick=()=>{
   const detourTarget=trace.includes(s)?target:19;
   const middle=s.mid;
   const direction=s.value<detourTarget?'left':'right';
-  player.currentTime=0;
-  player.source=`import manimgx as m
+  const detourSource=`import manimgx as m
 m.config.background_color='#0c111a'
 class WhySortedOrder(m.Scene):
     def construct(self):
@@ -146,9 +153,9 @@ class WhySortedOrder(m.Scene):
         self.play(m.Write(caption),run_time=1)
         self.wait(3)
 `;
-  player.play();update();
+  loadScene(detourSource,0,true);update();
 };
-$('return').onclick=()=>{player.pause();player.source=source;player.currentTime=savedTime;detour=false;update();};
+$('return').onclick=()=>{loadScene(source,savedTime,false);detour=false;update();};
 $('ask').onclick=async()=>{
   player.pause();
   const s=trace[current];
