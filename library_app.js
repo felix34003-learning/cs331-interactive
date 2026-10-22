@@ -1,5 +1,5 @@
 import {settings} from './manimgx.js';
-import {sceneCode,STEP_SECONDS} from './library_scene.js?v=5042de6d791a';
+import {sceneCode,STEP_SECONDS} from './library_scene.js?v=6cd4cd5f4604';
 settings.manimgx='manimgx==0.1.1';
 const $=id=>document.getElementById(id);
 let library,lessons=[],selected=null,current=0,part='all',player=null,focused=false,savedTime=0;
@@ -167,7 +167,7 @@ setInterval(()=>{
   }
 },200);
 try{
-  const response=await fetch('./library.json?v=5042de6d791a',{signal:AbortSignal.timeout(30000)});
+  const response=await fetch('./library.json?v=6cd4cd5f4604',{signal:AbortSignal.timeout(30000)});
   if(!response.ok)throw Error('Lesson library could not load. Refresh or try again shortly.');
   library=await response.json();lessons=library.lessons;
   $('loading').hidden=true;renderCoverage();route();
