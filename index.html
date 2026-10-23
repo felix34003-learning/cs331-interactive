@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Interactive ManimGX lessons for CS331 algorithms, data structures, and course concepts.">
 <title>CS331 · Visual study library</title>
-<link rel="stylesheet" href="library.css?v=2b81d6220195">
+<link rel="stylesheet" href="library.css?v=1b4f6489164c">
 <header class="site-header"><a href="#" class="brand">CS331 <span>Visual study library</span></a><span class="engine-badge">ManimGX · no video downloads</span></header>
 <div class="shell">
   <aside class="sidebar" aria-label="Lesson navigation">
@@ -17,7 +17,7 @@
     <p id="loading" role="status">Loading the lesson library…</p>
     <section id="catalog" hidden>
       <div class="eyebrow">YOUR COURSE, ONE IDEA AT A TIME</div><h1>See the idea.<br>Work through the steps.</h1>
-      <p class="lead">Named lessons for algorithms, data structures, runtime analysis, and the concepts behind them. Choose a topic to start.</p>
+      <p class="lead">Start with a problem, learn the background, and follow a visual example with matching Python. Each lesson connects the idea to applications and ends with a recap and a practice question.</p>
       <div class="scope"><h2>Organized around your course</h2><p><strong>First half / Midterm 1:</strong> Python, runtime complexity, arrays, linked lists, stacks, and queues.</p><p><strong>Second half:</strong> recursion, hash tables, heaps, and BSTs form the announced Midterm 2 core. AVL trees, sorting, and graphs are grouped as later material.</p><p class="small"><a href="https://iit.instructure.com/courses/25884/discussion_topics/104466" target="_blank" rel="noopener">Midterm 1 announcement</a> · <a href="https://iit.instructure.com/courses/25884/discussion_topics/106989" target="_blank" rel="noopener">Midterm 2 announcement</a> · Canvas sign-in required</p></div>
       <p id="library-summary" class="muted"></p><div id="topic-grid" class="topic-grid"></div>
       <details class="coverage"><summary id="coverage-label">Slide coverage</summary><div id="coverage-detail"></div><p class="small muted">Page mappings show which lessons cover each slide page. Repeated examples and title slides share lessons. Course administration is grouped separately from examinable concepts.</p></details>
@@ -25,9 +25,19 @@
     <article id="reader" hidden>
       <div class="reader-top"><a href="#">← All topics</a><span id="lesson-meta" class="eyebrow"></span></div>
       <h1 id="lesson-title"></h1><p id="takeaway" class="lead"></p>
+      <nav class="lesson-roadmap" aria-label="Lesson sections"><a href="#lesson-background" data-section="lesson-background">1 · Start here</a><a href="#walkthrough" data-section="walkthrough">2 · Work through it</a><a href="#lesson-applications" data-section="lesson-applications">3 · Use it</a><a href="#lesson-recap" data-section="lesson-recap">4 · Make it stick</a></nav>
+      <section id="lesson-background" class="lesson-intro">
+        <div class="eyebrow">Start with the problem</div><h2 id="motivation"></h2><p id="background"></p>
+        <p class="learning-goal"><strong>By the end:</strong> <span id="objective"></span></p>
+        <div id="prerequisites" class="prerequisites"></div>
+        <button id="start-walkthrough" class="primary">Work through the example ↓</button>
+      </section>
+      <section id="walkthrough" class="walkthrough-intro"><div class="eyebrow">Guided example</div><h2>Follow the idea from one step to the next</h2><p class="muted">Read the explanation beside the diagram, then use Next when it makes sense. The highlighted Python connects the idea to its implementation.</p></section>
       <div class="lesson-layout"><section aria-label="Interactive ManimGX animation">
+        <section class="step-story" aria-live="polite"><div id="step-label" class="eyebrow"></div><h2 id="caption"></h2><p id="step-bridge"></p><p id="why-text"></p></section>
         <div id="player-mount"></div><p id="runtime-status" role="status" class="small muted">Preparing animation…</p>
         <div class="controls"><button id="back">← Previous</button><button id="play" class="primary">Play / pause</button><button id="next">Next →</button><button id="replay">Replay</button></div>
+        <label class="guided-toggle"><input id="guided" type="checkbox" checked> Pause after each step so I can read</label>
         <div id="steps" class="steps" aria-label="Jump to a lesson step"></div>
         <p class="legend">Blue: structure · Yellow: current · Green: settled · Gray: inactive · Coral: caution</p>
         <div id="variables" class="variables" aria-label="Current variables"></div>
@@ -36,10 +46,12 @@
         <p id="code-hint" class="small muted" aria-live="polite">Highlighted lines follow the animation step.</p><p class="small muted">A synchronized walkthrough, not a live Python debugger.</p>
         <pre id="python-code" aria-label="Python source with current lines highlighted"></pre>
       </section><section class="explanation">
-        <div id="step-label" class="eyebrow"></div><h2 id="caption"></h2><p id="why-text"></p>
+        <p id="next-bridge" class="next-bridge"></p>
         <button id="focus-step">Focus on this diagram</button><button id="return" hidden>Return to my lesson step</button>
         <details open><summary>Key idea / invariant</summary><p id="invariant"></p></details><details><summary>Cost and assumptions</summary><p id="complexity"></p></details>
       </section></div>
+      <section id="lesson-applications" class="teaching-section"><div class="eyebrow">Connect it to a real problem</div><h2>Where you would use this</h2><ul id="applications"></ul></section>
+      <section id="lesson-recap" class="teaching-section"><div class="eyebrow">Bring the pieces together</div><h2>What you should take away</h2><p id="lesson-summary"></p><p id="builds-toward" class="muted"></p></section>
       <section class="checkpoint"><h2>Check your understanding</h2><p id="check-question"></p><div id="check-options"></div><p id="check-feedback" role="status"></p></section>
       <section class="question"><h2>Ask about this exact step</h2><p class="muted">Capture your question with the diagram state, lesson title, and source references, then paste it into our Codex chat.</p><label for="question">Question or study note</label><textarea id="question" rows="2" placeholder="What part is unclear?"></textarea><button id="ask" class="primary">Copy question for Codex</button><span id="copy-status" role="status"></span><textarea id="context" rows="6" readonly hidden aria-label="Question with lesson context"></textarea></section>
       <div class="lesson-footer"><label><input id="completed" type="checkbox"> Mark this lesson reviewed</label><div id="related" class="controls"></div><p id="source" class="small muted"></p></div>
@@ -47,5 +59,5 @@
     <footer>Built from the currently available CS331 slides and lecture notebooks. Original teaching material stays in Canvas; these are original visual explanations. First animation loads a shared Python/WebGPU runtime. Works in current Chrome and Edge. Progress and notes stay in this browser.</footer>
   </main>
 </div>
-<script type="module" src="library_app.js?v=2b81d6220195"></script>
+<script type="module" src="library_app.js?v=1b4f6489164c"></script>
 </html>

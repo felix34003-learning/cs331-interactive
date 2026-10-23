@@ -1,5 +1,5 @@
 // One renderer for editable lesson traces. ManimGX performs all animation drawing.
-export const STEP_SECONDS=5;
+export const STEP_SECONDS=8;
 export function sceneCode(lesson, onlyStep=null){
   const selected=onlyStep===null?lesson.steps:[lesson.steps[onlyStep]];
   const payload=JSON.stringify({id:lesson.id,steps:selected});
@@ -11,9 +11,10 @@ m.config.background_color='#0c111a'
 data=json.loads(${JSON.stringify(payload)})
 COLORS={'active':'#f2ce73','done':'#b5f0d4','muted':'#68788f','warning':'#f59d94','':'#69a9ef'}
 def color(state): return COLORS.get(state or '',COLORS[''])
-def fitted(text,size,width):
+def fitted(text,size,width,height=None):
     obj=m.Text(str(text),font_size=size)
     if obj.width>width: obj.scale(width/obj.width)
+    if height is not None and obj.height>height: obj.scale(height/obj.height)
     return obj
 class ${className}(m.Scene):
     def construct(self):
@@ -47,26 +48,26 @@ class ${className}(m.Scene):
                 pos=positions[str(node['id'])]
                 c=color(node.get('state'))
                 box=m.Rectangle(width=1.05,height=.72,color=c,fill_opacity=.16,stroke_width=3).move_to(pos)
-                label=fitted(node['label'],27,.92).set_color(c).move_to(pos)
+                label=fitted(node['label'],27,.92,.54).set_color(c).move_to(pos)
                 group.add(box,label)
             for r,row in enumerate(rows):
                 y=(-1.1-r*.92) if nodes else (1.7-r*1.8)
-                label=fitted(row.get('label',''),25,11.8)
+                label=fitted(row.get('label',''),30,11.8)
                 label.move_to([-5.8+label.width/2,y+.62,0])
                 group.add(label)
                 items=row.get('items',[])
-                spacing=min(1.22,11.4/max(1,len(items)))
+                spacing=min(1.65,11.4/max(1,len(items)))
                 for i,item in enumerate(items):
                     x=(i-(len(items)-1)/2)*spacing
                     c=color(item.get('state'))
                     box=m.Rectangle(width=spacing*.9,height=.75,color=c,fill_opacity=.16,stroke_width=2).move_to([x,y,0])
-                    value=fitted(item.get('text',''),29,spacing*.8).set_color(c).move_to([x,y,0])
+                    value=fitted(item.get('text',''),36,spacing*.8,.56).set_color(c).move_to([x,y,0])
                     group.add(box,value)
             if not nodes and not rows:
                 raise ValueError('Every lesson step needs a visual diagram')
-            if previous is None: self.play(m.FadeIn(group),run_time=.6)
-            else: self.play(m.ReplacementTransform(previous,group),run_time=.6)
-            self.wait(4.4)
+            if previous is None: self.play(m.FadeIn(group),run_time=1.1)
+            else: self.play(m.ReplacementTransform(previous,group),run_time=1.1)
+            self.wait(6.9)
             previous=group
 `;
 }
