@@ -1,5 +1,5 @@
 import {settings} from './manimgx.js';
-import {sceneCode,STEP_SECONDS} from './library_scene.js?v=1b4f6489164c';
+import {sceneCode,STEP_SECONDS} from './library_scene.js?v=78cc22a36bac';
 settings.manimgx='manimgx==0.1.1';
 const $=id=>document.getElementById(id);
 let library,lessons=[],selected=null,current=0,part='all',player=null,focused=false,savedTime=0,transitionStop=null;
@@ -16,7 +16,8 @@ const topicFoundations={
   'AVL trees':['bst_property','avl_balance'],'Sorting':['sorting_overview','arrays_layout'],'Graphs':['graph_vertices_edges']
 };
 const prerequisiteOverrides={
-  arrays_layout:['list_adt'],queue_fifo:[],hash_functions:['map_adt','keyspace'],heap_property:['tree_vocabulary','binary_tree_shapes'],
+  arrays_layout:['list_adt'],queue_fifo:[],direct_address:['map_adt','arrays_layout'],keyspace:['map_adt','direct_address'],
+  hash_functions:['map_adt','keyspace'],binary_tree_shapes:['tree_vocabulary'],heap_property:['tree_vocabulary','binary_tree_shapes'],
   bst_property:['tree_vocabulary'],avl_balance:['bst_property','tree_vocabulary'],recursion_components:['python_functions'],
   bfs:['graph_vertices_edges','queue_fifo'],dfs:['graph_vertices_edges','recursion_components'],
   merge_sort:['sorting_overview','recursion_components'],heap_sort:['sorting_overview','heap_property'],
@@ -207,7 +208,7 @@ setInterval(()=>{
   }
 },200);
 try{
-  const response=await fetch('./library.json?v=1b4f6489164c',{signal:AbortSignal.timeout(30000)});
+  const response=await fetch('./library.json?v=78cc22a36bac',{signal:AbortSignal.timeout(30000)});
   if(!response.ok)throw Error('Lesson library could not load. Refresh or try again shortly.');
   library=await response.json();lessons=library.lessons;
   $('loading').hidden=true;renderCoverage();route();
